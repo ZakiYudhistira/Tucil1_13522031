@@ -1,8 +1,13 @@
+# Creator : Zaki Yudhistira Candra
+# NIM     : 13522031
+# Cyberpunk breach protocol solver
+
 import random as rd
 import time as tm
 
 # Global variable
-path = "src/Input/"
+path = "test/Input/"
+save_path = "test/Solution/"
 
 class Sequence: # Contains sequence code and its score
     def __init__(self, sequence, points):
@@ -29,30 +34,6 @@ def printSequences(sequences): # For displaying sequences
         else:
             print("")
             Sequence.printData(sequences[i])
-            
-class Token: # Token class
-    def __init__(self, token, x, y):
-        self.token = token
-        self.x = x
-        self.y = y
-
-class Matrix: # Matrix class where tokens are placed
-    def __init__(self, content, row, column):
-        self.content = content
-        self.column = column
-        self.row = row
-        self.size = row*column
-
-    def printMatrix(self):
-        for i in range(self.row):
-            first = True
-            for j in range(self.column):
-                if first:
-                    print(self.content[i][j].token, end="")
-                    first = False
-                else:
-                    print(" " + self.content[i][j].token, end="")
-            print("")
 
 def generateSequence(tokens, max, number_of_sequence):
     # Randomly generate sequences
@@ -64,6 +45,12 @@ def generateSequence(tokens, max, number_of_sequence):
             temp.append(tokens[index])
         sequences.append(Sequence(temp, rd.randint(1,10)*10))
     return sequences
+            
+class Token: # Token class
+    def __init__(self, token, x, y):
+        self.token = token
+        self.x = x
+        self.y = y
 
 def compareToken(tokens, seq):
     # Comparing 2 array of tokens and returns a boolean
@@ -85,6 +72,37 @@ def getTokenList(tokens):
     # Converting from an array of token into an array of strings
     return [token.token for token in tokens]
 
+class Matrix: # Matrix class where tokens are placed
+    def __init__(self, content, row, column):
+        self.content = content
+        self.column = column
+        self.row = row
+        self.size = row*column
+
+    def printMatrix(self):
+        for i in range(self.row):
+            first = True
+            for j in range(self.column):
+                if first:
+                    print(self.content[i][j].token, end="")
+                    first = False
+                else:
+                    print(" " + self.content[i][j].token, end="")
+            print("")
+
+def generateMatrix(tokens, row, column):
+    # Randomly matrix generation
+    matrix = []
+    for i in range(row):
+        line = []
+        for j in range(column):
+            index = rd.randint(0, len(tokens) - 1)
+            line.append(Token(tokens[index],j,i))
+        matrix.append(line)
+    return Matrix(matrix, row, column)
+
+# Misc functions
+
 def getScore(sequences, tokens):
     # Calculate possible score from the sequences and a solution
     score = 0
@@ -102,17 +120,6 @@ def getSolution(solutions, sequences):
             max = getScore(sequences, solutions[i])
             solve = solutions[i]
     return max, solve
-
-def generateMatrix(tokens, row, column):
-    # Randomly matrix generation
-    matrix = []
-    for i in range(row):
-        line = []
-        for j in range(column):
-            index = rd.randint(0, len(tokens) - 1)
-            line.append(Token(tokens[index],i,j))
-        matrix.append(line)
-    return Matrix(matrix, row, column)
 
 # Welcome menu
 print("|| BREACH PROTOCOL SOLVER ||")
@@ -139,15 +146,16 @@ if initiation == "y":
     matrix_WnH = matrix_WnH.split(" ")
     matrix_length = int(matrix_WnH[0])
     matrix_width = int(matrix_WnH[1])
+    print(matrix_width, matrix_length)
     main_matrix = []
     for i in range(matrix_length):
         lines = file.readline()
         lines = lines.rstrip('\n')
         lines = lines.split(" ")
         main_matrix.append(lines)
-    for i in range(matrix_width):
-        for j in range(matrix_length):
-            main_matrix[i][j] = Token(main_matrix[i][j], i, j)
+    for i in range(matrix_length):
+        for j in range(matrix_width):
+            main_matrix[i][j] = Token(main_matrix[i][j], j, i)
     main_matrix = Matrix(main_matrix, matrix_length, matrix_width)
     sequence_count = int(file.readline())
     sequences = []
@@ -195,7 +203,7 @@ print("Solving...")
 # Solving algorithm
 def isIn(row, column, stack):
 # isIn function to detect wether a token is already selected or not
-    if stack != None:
+    if stack != []:
         for token in stack:
             if (token.x, token.y) == (column, row):
                 return True
@@ -233,6 +241,7 @@ string ="" # To be saved string
 end = tm.time()
 if a != 0:
     print(a)
+    string += str(a) + "\n"
     first = True
     for i in b:
         print(i.token, end=' ')
@@ -243,8 +252,8 @@ if a != 0:
             first = False
     print("")
     for i in b:
-        print(str(i.y+1)+", "+str(i.x+1))
-        string += '\n' + str(i.y+1)+", "+str(i.x+1)
+        print(str(i.x+1) + ", " + str(i.y+1))
+        string += '\n' + str(i.x+1) + ", " + str(i.y+1)
 else:
     print("No optimum solution found") 
 
@@ -257,11 +266,11 @@ inputn = input("Do you want to save the solution ? (y/n) : ")
 inputn = inputn.lower()
 if inputn == "y": # File saving mechanism, the solution is saved into the Solution folder
     if initiation != "n":
-        save = open("src/Solution/Solution_"+initiation, 'w')
+        save = open(save_path+"_"+initiation, 'w')
     else:
         file_name = input("Enter save file name : ")
-        save = open("src/Solution/"+file_name, 'w')
-    save.write()
+        save = open(save_path+file_name, 'w')
+    save.write(string)
     save.close()
     print("Thank you for using the program...")
 elif inputn == "n":
