@@ -261,7 +261,7 @@ if inputn == "y": # File saving mechanism, the solution is saved into the Soluti
     else:
         file_name = input("Enter save file name : ")
         save = open("src/Solution/"+file_name, 'w')
-    save.write(
+    save.write()
     save.close()
     print("Thank you for using the program...")
 elif inputn == "n":
