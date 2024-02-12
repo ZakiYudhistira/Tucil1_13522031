@@ -144,8 +144,8 @@ if initiation == "y":
     buffer_size = int(file.readline())
     matrix_WnH = file.readline()
     matrix_WnH = matrix_WnH.split(" ")
-    matrix_length = int(matrix_WnH[0])
-    matrix_width = int(matrix_WnH[1])
+    matrix_length = int(matrix_WnH[1])
+    matrix_width = int(matrix_WnH[0])
     print(matrix_width, matrix_length)
     main_matrix = []
     for i in range(matrix_length):
